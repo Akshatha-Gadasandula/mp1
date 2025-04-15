@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useGlobalContext } from '../../context/globalContext';
-import { comment, dollar } from '../../utils/Icons';
+import { comment } from '../../utils/Icons';
+import { InnerLayout } from '../../styles/Layouts';
 
 function FinancialAdvisor() {
     const [question, setQuestion] = useState('');
@@ -40,7 +41,7 @@ function FinancialAdvisor() {
                         },
                         {
                             role: "user",
-                            content: `Based on this financial data: ${JSON.stringify(financialContext)}, please answer: ${question}`
+                            content: `Based on this financial data: ${JSON.stringify(financialContext)}, please answer: ${question} and make sure the answer has only basic text format and not bold or italic`
                         }
                     ]
                 })
@@ -305,7 +306,7 @@ const FinancialAdvisorStyled = styled.div`
         padding: 2rem;
         
         p {
-            color: var(--primary-color);
+            color: #000000;
             line-height: 1.8;
             margin-bottom: 1rem;
             font-size: 1.1rem;

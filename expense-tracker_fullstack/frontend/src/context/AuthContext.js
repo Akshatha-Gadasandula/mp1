@@ -9,6 +9,15 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Set up axios defaults
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
+  }, []);
 
   useEffect(() => {
     // Check if user is logged in on component mount
@@ -19,11 +28,15 @@ export const AuthProvider = ({ children }) => {
       try {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
+        setIsAuthenticated(true);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       } catch (err) {
         console.error("Error parsing user data:", err);
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        delete axios.defaults.headers.common["Authorization"];
         setUser(null);
+        setIsAuthenticated(false);
       }
     }
     setLoading(false);
@@ -40,7 +53,9 @@ export const AuthProvider = ({ children }) => {
       const { token, user } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser(user);
+      setIsAuthenticated(true);
       setError(null);
       return true;
     } catch (err) {
@@ -59,7 +74,9 @@ export const AuthProvider = ({ children }) => {
       const { token, user } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser(user);
+      setIsAuthenticated(true);
       setError(null);
       return true;
     } catch (err) {
@@ -71,12 +88,14 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    delete axios.defaults.headers.common["Authorization"];
     setUser(null);
+    setIsAuthenticated(false);
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, error, register, login, logout }}
+      value={{ user, loading, error, isAuthenticated, register, login, logout }}
     >
       {children}
     </AuthContext.Provider>

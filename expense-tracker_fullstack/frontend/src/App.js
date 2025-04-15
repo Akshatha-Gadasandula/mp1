@@ -1,11 +1,6 @@
 import React, { useState, useMemo } from "react";
 import styled from "styled-components";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import bg from "./img/bg.png";
 import { MainLayout } from "./styles/Layouts";
 import Orb from "./Components/Orb/Orb";
@@ -14,22 +9,21 @@ import Dashboard from "./Components/Dashboard/Dashboard";
 import Income from "./Components/Income/Income";
 import Expenses from "./Components/Expenses/Expenses";
 import FinancialAdvisor from "./Components/FinancialAdvisor/FinancialAdvisor";
+import Homepage from "./Components/Homepage/Homepage";
 import { useGlobalContext } from "./context/globalContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./Components/Login/Login";
 import Register from "./Components/Register/Register";
-import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
+import GlobalStyles from "./styles/GlobalStyles";
 
 // Main App Content
 const AppContent = () => {
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(2);
   const global = useGlobalContext();
   const { user, logout } = useAuth();
 
   const displayData = () => {
     switch (active) {
-      case 1:
-        return <Dashboard />;
       case 2:
         return <Dashboard />;
       case 3:
@@ -63,24 +57,23 @@ const AppContent = () => {
   );
 };
 
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  return children;
+};
+
 function App() {
   return (
     <AuthProvider>
+      <GlobalStyles />
       <Router>
         <Routes>
-          {/* Public routes */}
+          <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
-          {/* Protected routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <AppContent />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/dashboard"
             element={
@@ -113,9 +106,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* Catch all route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </AuthProvider>
@@ -124,15 +114,40 @@ function App() {
 
 const AppStyled = styled.div`
   height: 100vh;
-  background-image: url(${(props) => props.bg});
+  background: 
+    linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(129, 199, 132, 0.05) 100%),
+    url('/images/finance-background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.6);
+    z-index: -1;
+  }
+
   main {
     flex: 1;
-    background: rgba(252, 246, 249, 0.78);
-    border: 3px solid #ffffff;
-    backdrop-filter: blur(4.5px);
-    border-radius: 32px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid rgba(76, 175, 80, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
     overflow-x: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
     &::-webkit-scrollbar {
       width: 0;
     }
