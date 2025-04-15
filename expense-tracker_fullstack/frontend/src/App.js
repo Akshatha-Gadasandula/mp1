@@ -13,6 +13,7 @@ import Navigation from "./Components/Navigation/Navigation";
 import Dashboard from "./Components/Dashboard/Dashboard";
 import Income from "./Components/Income/Income";
 import Expenses from "./Components/Expenses/Expenses";
+import FinancialAdvisor from "./Components/FinancialAdvisor/FinancialAdvisor";
 import { useGlobalContext } from "./context/globalContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./Components/Login/Login";
@@ -35,6 +36,8 @@ const AppContent = () => {
         return <Income />;
       case 4:
         return <Expenses />;
+      case 5:
+        return <FinancialAdvisor />;
       default:
         return <Dashboard />;
     }
@@ -96,6 +99,14 @@ function App() {
           />
           <Route
             path="/expenses"
+            element={
+              <ProtectedRoute>
+                <AppContent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/financial-advisor"
             element={
               <ProtectedRoute>
                 <AppContent />
