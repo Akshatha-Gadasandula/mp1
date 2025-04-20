@@ -7,6 +7,7 @@ import styled from "styled-components";
 /* global google */
 
 const BACKEND_URL = 'http://localhost:5000';
+const GOOGLE_CLIENT_ID = "596079188368-2hh5360q26vpb2c4dv9tm3vv3v4jsiso.apps.googleusercontent.com";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -52,8 +53,9 @@ const Login = () => {
     const initializeGoogleSignIn = () => {
       if (window.google && window.google.accounts) {
         console.log("Initializing Google Sign-In...");
+        console.log("Using Client ID:", GOOGLE_CLIENT_ID);
         window.google.accounts.id.initialize({
-          client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+          client_id: GOOGLE_CLIENT_ID,
           callback: handleGoogleResponse,
           auto_select: false,
         });
